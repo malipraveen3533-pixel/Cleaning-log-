@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cleaning Log</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg1:#667eea;--bg2:#764ba2;--dark:#111827;--muted:#64748b;--card:#ffffff;--soft:#f8fafc;--line:#e5e7eb;--primary:#667eea;--red:#ef4444;--green:#10b981;--orange:#f59e0b}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--dark);padding:14px}
+.app{max-width:1180px;margin:auto}.header{text-align:center;color:white;margin:14px 0 18px}.header h1{font-size:32px}.header p{opacity:.92;margin-top:4px}.topbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;color:white;flex-wrap:wrap}.pill{background:rgba(255,255,255,.18);padding:9px 12px;border-radius:999px;backdrop-filter:blur(8px)}
+.card{background:rgba(255,255,255,.96);border-radius:22px;padding:18px;margin-bottom:16px;box-shadow:0 14px 38px rgba(0,0,0,.18)}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:16px}.stat{padding:18px;border-radius:20px;color:white;box-shadow:0 8px 22px rgba(0,0,0,.18);background:linear-gradient(135deg,#43cea2,#185a9d)}.stat:nth-child(2){background:linear-gradient(135deg,#ff9966,#ff5e62)}.stat:nth-child(3){background:linear-gradient(135deg,#36d1dc,#5b86e5)}.stat:nth-child(4){background:linear-gradient(135deg,#f7971e,#ffd200)}.stat:nth-child(5){background:linear-gradient(135deg,#8e2de2,#4a00e0)}.stat:nth-child(6){background:linear-gradient(135deg,#11998e,#38ef7d)}.stat h3{font-size:13px;font-weight:750;opacity:.95}.stat b{font-size:28px;display:block;margin-top:8px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}label{font-weight:800;font-size:14px;display:block;margin-bottom:6px}input,select,textarea{width:100%;padding:13px;border:1px solid #d7ddea;border-radius:14px;font-size:15px;background:white;color:var(--dark)}textarea{min-height:84px;resize:vertical}button{border:0;border-radius:14px;padding:12px 15px;font-weight:850;cursor:pointer;background:var(--dark);color:white}button:disabled{opacity:.55;cursor:not-allowed}.btn{background:linear-gradient(135deg,var(--bg1),var(--bg2))}.light{background:#eef2ff;color:var(--dark)}.red{background:var(--red)}.green{background:var(--green)}.orange{background:var(--orange)}.row,.rooms,.workers,.tabs{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}.choice{background:#f1f5f9;color:var(--dark);border:2px solid transparent}.choice.active{background:var(--primary);color:white;border-color:#4f46e5}.section{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.hidden{display:none!important}.small{font-size:13px;color:var(--muted);line-height:1.45}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:1050px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}th{background:var(--soft)}.tab{background:#eef2ff;color:var(--dark)}.tab.active{background:var(--dark);color:white}.summary{display:flex;justify-content:space-between;background:var(--soft);padding:12px;border-radius:14px;margin:8px 0;gap:10px}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.day,.dayname{background:var(--soft);border-radius:12px;padding:8px;min-height:76px}.dayname{min-height:auto;text-align:center;font-weight:900}.day.work{background:#dcfce7;border:1px solid #22c55e}.modal{position:fixed;inset:0;background:rgba(0,0,0,.62);display:flex;align-items:center;justify-content:center;padding:14px;z-index:99}.box{background:white;border-radius:22px;padding:18px;max-width:720px;width:100%;max-height:91vh;overflow:auto}.manage-row{display:grid;grid-template-columns:1fr auto auto;gap:7px;margin:9px 0}.two-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.notice{padding:12px 14px;border-radius:14px;background:#fffbeb;border:1px solid #f59e0b;color:#92400e;margin-bottom:12px}.ok{background:#ecfdf5;border-color:#10b981;color:#065f46}.edit-banner{background:#eff6ff;border:1px solid #60a5fa;color:#1e3a8a;padding:10px;border-radius:14px;margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;align-items:center}.footer{text-align:center;color:white;opacity:.85;margin:18px 0}.searchbar{display:grid;grid-template-columns:1fr 180px 180px;gap:10px;margin-bottom:12px}
+@media(max-width:760px){body{padding:10px}.grid,.two-row,.searchbar{grid-template-columns:1fr}.section{flex-direction:column;align-items:flex-start}.card{padding:15px;border-radius:20px}.header h1{font-size:27px}.stat b{font-size:26px}.calendar{gap:5px}.day{min-height:68px;font-size:12px}.manage-row{grid-template-columns:1fr}.topbar{font-size:13px}}
+@media print{body{background:white}.form-card,.tabs,.row,.modal,.footer,.topbar,.searchbar{display:none!important}.card{box-shadow:none;border:1px solid #ddd}.header{color:#111827}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header"><h1>Cleaning Log</h1><p>B&B daily work tracker for Praveen & Team</p></div>
+  <div class="topbar"><div class="pill" id="syncStatus">Connecting Firebase...</div><div class="pill">Online shared database</div></div>
+  <div class="stats" id="stats"></div>
+
+  <div class="card form-card">
+    <div class="section"><h2 id="formTitle">Add Cleaning Entry</h2><button class="light" onclick="openAdminModal()">Admin: B&B / Rooms</button></div>
+    <div id="editBanner" class="edit-banner hidden"><span>Editing existing entry</span><button class="light" onclick="cancelEdit()">Cancel Edit</button></div>
+    <form id="form">
+      <div class="grid">
+        <div><label>Date</label><input type="date" id="date" required></div>
+        <div><label>Staff / Submitted By</label><input id="staff" placeholder="Example: Praveen" required></div>
+        <div><label>Select B&B</label><select id="bnb" required></select></div>
+        <div><label>Worker Count</label><div class="workers" id="workers"></div></div>
+        <div><label>Start Time Optional</label><input type="time" id="start"></div>
+        <div><label>End Time Optional</label><input type="time" id="end"></div>
+        <div><label>Manual Actual Hours</label><input type="number" id="manual" min="0" step="0.25" placeholder="Example: 3.5"></div>
+        <div><label>Auto Labour Hours</label><input id="labourPreview" readonly placeholder="Actual Hours × Workers"></div>
+      </div>
+      <div style="margin-top:14px"><label>Rooms Cleaned</label><div class="rooms" id="rooms"></div><p class="small" id="roomHelp"></p></div>
+      <div id="namesBox" class="hidden" style="margin-top:14px"><label>Worker Names Required</label><input id="names" placeholder="Example: Praveen, Ramesh, Aman"></div>
+      <div style="margin-top:14px"><label>Notes Optional</label><textarea id="notes" placeholder="Any extra note..."></textarea></div>
+      <div class="row"><button class="btn" type="submit" id="saveBtn">Save Entry</button><button type="button" class="green" onclick="exportCSV()">Export CSV</button><button type="button" class="light" onclick="window.print()">Print</button></div>
+      <p class="small" style="margin-top:10px">Labour Hours = Actual Hours × Worker Count. Labour Rooms = Rooms × Worker Count.</p>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="section"><h2>History</h2><div class="tabs"><button class="tab active" onclick="showTab('list',this)">List</button><button class="tab" onclick="showTab('calendar',this)">Calendar</button><button class="tab" onclick="showTab('weekly',this)">Weekly</button><button class="tab" onclick="showTab('monthly',this)">Monthly</button></div></div>
+    <div class="searchbar"><input id="search" placeholder="Search staff, B&B, room, notes..." oninput="renderList()"><input type="date" id="fromDate" onchange="renderList()"><input type="date" id="toDate" onchange="renderList()"></div>
+    <div id="listView"></div><div id="calendarView" class="hidden"></div><div id="weeklyView" class="hidden"></div><div id="monthlyView" class="hidden"></div>
+  </div>
+  <div class="footer">Firebase synced app • Same data on all phones</div>
+</div>
+
+<div id="adminModal" class="modal hidden"><div class="box">
+  <div class="section"><h2>Admin: Manage B&B / Rooms</h2><button class="red" onclick="closeAdminModal()">Close</button></div>
+  <div id="pinBox"><div class="notice">Enter Admin PIN to manage B&B, rooms, edit/delete entries.</div><label>Admin PIN</label><div class="row"><input id="pinInput" type="password" placeholder="Enter PIN"><button class="btn" onclick="unlockAdmin()">Unlock</button></div><p class="small">Default PIN is 1234. Change it inside code later if needed.</p></div>
+  <div id="adminPanel" class="hidden">
+    <div class="notice ok">Admin unlocked.</div>
+    <label>Add New B&B</label><div class="row"><input id="newBnb" placeholder="Example: New Society"><button class="btn" onclick="addBnb()">Add B&B</button></div><hr style="margin:18px 0">
+    <label>Select B&B to Manage</label><select id="manageBnb" onchange="renderManager()"></select>
+    <div style="margin-top:14px"><label>Edit B&B Name</label><div class="row"><input id="editBnbName"><button class="green" onclick="renameBnb()">Save Name</button><button class="red" onclick="deleteBnb()">Delete B&B</button></div><p class="small">Old history remains safe even if B&B is deleted from future list.</p></div><hr style="margin:18px 0">
+    <label>Rooms</label><div id="roomManager"></div><div class="row"><input id="newRoom" placeholder="New room name"><button class="btn" onclick="addRoom()">Add Room</button></div>
+  </div>
+</div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyDdpj8P2sHLVfm1gRKRDi2rOR4dm6k-9sQ",authDomain:"cleaning-log-8cb22.firebaseapp.com",projectId:"cleaning-log-8cb22",storageBucket:"cleaning-log-8cb22.firebasestorage.app",messagingSenderId:"188081648163",appId:"1:188081648163:web:f049c959b173aa1cff7796",measurementId:"G-176Y2HNMQH"};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ADMIN_PIN = "1234";
+let entries=[], bnbs=[], selectedRooms=[], workerCount=1, editId=null, adminUnlocked=false;
+const $=id=>document.getElementById(id);
+const entriesCol=collection(db,"cleaningEntries");
+const bnbsCol=collection(db,"bnbs");
+
+function today(){let d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().split("T")[0]}
+function fmt(n){return Number(n||0).toFixed(2).replace(/\.00$/,"")}
+function uid(){return "b"+Date.now()+Math.random().toString(16).slice(2)}
+function bnbName(id){return (bnbs.find(b=>b.id===id)||{name:id}).name}
+function esc(s){return String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
+function setStatus(t){$("syncStatus").textContent=t}
+
+async function seedBnbsIfEmpty(){
+  if(localStorage.getItem("seeded_bnbs_v1")) return;
+  await setDoc(doc(db,"bnbs","jacapo"),{id:"jacapo",name:"Jacapo",rooms:["Vohé","Nohé","Béy","New"],createdAt:serverTimestamp()});
+  await setDoc(doc(db,"bnbs","society"),{id:"society",name:"Society",rooms:["Santa Croce","Rooms","Near Big","Palazzo"],createdAt:serverTimestamp()});
+  localStorage.setItem("seeded_bnbs_v1","yes");
+}
+
+function listenFirebase(){
+  setStatus("Connecting Firebase...");
+  onSnapshot(query(bnbsCol,orderBy("name")),snap=>{
+    bnbs=snap.docs.map(d=>({docId:d.id,...d.data()}));
+    if(!bnbs.length) seedBnbsIfEmpty();
+    renderBnbSelects();renderRooms();renderManager();renderAll();setStatus("Synced online");
+  },err=>{setStatus("Firebase error: check rules");alert("Firebase B&B error: "+err.message)});
+  onSnapshot(query(entriesCol,orderBy("date","desc")),snap=>{
+    entries=snap.docs.map(d=>({docId:d.id,...d.data()})).sort((a,b)=>(b.date||"").localeCompare(a.date||"") || (b.createdMs||0)-(a.createdMs||0));
+    renderAll();setStatus("Synced online");
+  },err=>{setStatus("Firebase error: check rules");alert("Firebase Entries error: "+err.message)});
+}
+
+function renderBnbSelects(){
+  const opts=bnbs.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("");
+  const old=$("bnb").value; $("bnb").innerHTML=opts; if(bnbs.some(b=>b.id===old)) $("bnb").value=old;
+  $("manageBnb").innerHTML=opts;
+}
+function renderStats(){
+  let actual=entries.reduce((s,e)=>s+Number(e.hours||0),0), labour=entries.reduce((s,e)=>s+Number(e.labourHours||0),0), rooms=entries.reduce((s,e)=>s+(e.rooms||[]).length,0), labourRooms=entries.reduce((s,e)=>s+Number(e.labourRooms||0),0);
+  let html=`<div class="stat"><h3>Actual Working Hours</h3><b>${fmt(actual)}</b></div><div class="stat"><h3>Labour Hours</h3><b>${fmt(labour)}</b></div><div class="stat"><h3>Total Rooms</h3><b>${rooms}</b></div><div class="stat"><h3>Labour Rooms</h3><b>${labourRooms}</b></div>`;
+  bnbs.forEach(b=>{let h=entries.filter(e=>e.bnb===b.id).reduce((s,e)=>s+Number(e.labourHours||0),0);html+=`<div class="stat"><h3>${esc(b.name)} Labour Hours</h3><b>${fmt(h)}</b></div>`});
+  $("stats").innerHTML=html;
+}
+function renderWorkers(){
+  $("workers").innerHTML="";[1,2,3,4,5].forEach(n=>{let btn=document.createElement("button");btn.type="button";btn.textContent=n;btn.className="choice"+(workerCount===n?" active":"");btn.onclick=()=>{workerCount=n;$("namesBox").classList.toggle("hidden",n===1);renderWorkers();updateLabourPreview()};$("workers").appendChild(btn)})
+}
+function renderRooms(){
+  let b=bnbs.find(x=>x.id===$("bnb").value);$("rooms").innerHTML="";selectedRooms=selectedRooms.filter(r=>b?.rooms?.includes(r));
+  if(!b){$("rooms").innerHTML="<p class='small'>Add a B&B from Admin first.</p>";return}
+  if(!b.rooms?.length){$("rooms").innerHTML="<p class='small'>No rooms. Ask admin to add rooms.</p>";return}
+  b.rooms.forEach(r=>{let btn=document.createElement("button");btn.type="button";btn.textContent=r;btn.className="choice"+(selectedRooms.includes(r)?" active":"");btn.onclick=()=>{selectedRooms.includes(r)?selectedRooms=selectedRooms.filter(x=>x!==r):selectedRooms.push(r);renderRooms();updateLabourPreview()};$("rooms").appendChild(btn)});
+  $("roomHelp").textContent=selectedRooms.length?`Selected: ${selectedRooms.length} room(s). Labour Rooms: ${selectedRooms.length*workerCount}`:"";
+}
+function calcHours(s,e){let [sh,sm]=s.split(":").map(Number),[eh,em]=e.split(":").map(Number);let a=sh*60+sm,b=eh*60+em;if(b<a)b+=1440;return (b-a)/60}
+function getActualHours(){let m=Number($("manual").value),s=$("start").value,e=$("end").value;if(m>0)return m;if(s&&e)return calcHours(s,e);return 0}
+function updateLabourPreview(){let h=getActualHours();$("labourPreview").value=h?`${fmt(h)} × ${workerCount} = ${fmt(h*workerCount)} labour hrs`:""}
+["manual","start","end"].forEach(id=>$(id).addEventListener("input",updateLabourPreview));
+
+async function saveEntry(ev){
+  ev.preventDefault();let hours=getActualHours(), start=$("start").value, end=$("end").value, manual=Number($("manual").value);
+  if(!hours)return alert("Enter Manual Hours OR Start & End Time."); if(manual<0)return alert("Manual hours cannot be negative."); if(!$("date").value)return alert("Select date."); if(!$("staff").value.trim())return alert("Enter staff name."); if(!$("bnb").value)return alert("Select B&B."); if(!selectedRooms.length)return alert("Select at least one room."); if(workerCount>1&&!$("names").value.trim())return alert("Worker names required when workers are more than 1.");
+  let data={date:$("date").value,staff:$("staff").value.trim(),startTime:start,endTime:end,hours:Number(hours),workerCount,labourHours:Number(hours)*workerCount,bnb:$("bnb").value,bnbName:bnbName($("bnb").value),rooms:[...selectedRooms],roomCount:selectedRooms.length,labourRooms:selectedRooms.length*workerCount,workerNames:workerCount===1?$("staff").value.trim():$("names").value.trim(),notes:$("notes").value.trim(),updatedAt:serverTimestamp(),createdMs:Date.now()};
+  $("saveBtn").disabled=true;$("saveBtn").textContent="Saving...";
+  try{ if(editId){await updateDoc(doc(db,"cleaningEntries",editId),data)}else{data.createdAt=serverTimestamp();await addDoc(entriesCol,data)} resetForm(); }
+  catch(err){alert("Save error: "+err.message)} finally{$("saveBtn").disabled=false;$("saveBtn").textContent="Save Entry"}
+}
+$("form").addEventListener("submit",saveEntry);
+function resetForm(){let staff=$("staff").value;$("form").reset();$("date").value=today();$("staff").value=staff;selectedRooms=[];workerCount=1;editId=null;$("formTitle").textContent="Add Cleaning Entry";$("editBanner").classList.add("hidden");$("namesBox").classList.add("hidden");renderWorkers();renderRooms();updateLabourPreview()}
+window.cancelEdit=resetForm;
+
+function filteredEntries(){let q=$("search").value.toLowerCase(),from=$("fromDate").value,to=$("toDate").value;return entries.filter(e=>{let text=[e.staff,bnbName(e.bnb),(e.rooms||[]).join(" "),e.workerNames,e.notes].join(" ").toLowerCase();return (!q||text.includes(q))&&(!from||e.date>=from)&&(!to||e.date<=to)})}
+function renderList(){let arr=filteredEntries();if(!arr.length){$("listView").innerHTML="<p>No entries found.</p>";return}$("listView").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Staff</th><th>Time</th><th>B&B</th><th>Rooms</th><th>Actual</th><th>Workers</th><th>Labour Hrs</th><th>Labour Rooms</th><th>Names</th><th>Notes</th><th>Actions</th></tr></thead><tbody>${arr.map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.staff)}</td><td>${esc(e.startTime||"-")} ${e.endTime?"to "+esc(e.endTime):""}</td><td>${esc(bnbName(e.bnb))}</td><td>${esc((e.rooms||[]).join(", "))}</td><td>${fmt(e.hours)}</td><td>${e.workerCount}</td><td>${fmt(e.labourHours)}</td><td>${e.labourRooms||0}</td><td>${esc(e.workerNames||"-")}</td><td>${esc(e.notes||"-")}</td><td><button class="light" onclick="shareEntry('${e.docId}')">Share</button> <button class="orange" onclick="editEntry('${e.docId}')">Edit</button> <button class="red" onclick="deleteEntry('${e.docId}')">Delete</button></td></tr>`).join("")}</tbody></table></div>`}
+window.editEntry=id=>{if(!adminUnlocked)return openAdminModal();let e=entries.find(x=>x.docId===id);if(!e)return;editId=id;$("formTitle").textContent="Edit Cleaning Entry";$("editBanner").classList.remove("hidden");$("date").value=e.date;$("staff").value=e.staff||"";$("bnb").value=e.bnb;$("start").value=e.startTime||"";$("end").value=e.endTime||"";$("manual").value=e.hours||"";workerCount=Number(e.workerCount||1);$("names").value=e.workerNames||"";$("notes").value=e.notes||"";selectedRooms=[...(e.rooms||[])];$("namesBox").classList.toggle("hidden",workerCount===1);renderWorkers();renderRooms();updateLabourPreview();scrollTo({top:0,behavior:"smooth"})}
+window.deleteEntry=async id=>{if(!adminUnlocked)return openAdminModal();if(confirm("Delete this entry?"))await deleteDoc(doc(db,"cleaningEntries",id))}
+window.shareEntry=async id=>{let e=entries.find(x=>x.docId===id);let text=`Cleaning Log\nDate: ${e.date}\nStaff: ${e.staff}\nB&B: ${bnbName(e.bnb)}\nRooms: ${(e.rooms||[]).join(", ")}\nActual Hours: ${fmt(e.hours)}\nWorkers: ${e.workerCount}\nLabour Hours: ${fmt(e.labourHours)}\nLabour Rooms: ${e.labourRooms}\nNotes: ${e.notes||"-"}`;if(navigator.share)navigator.share({title:"Cleaning Log",text}).catch(()=>{});else navigator.clipboard.writeText(text).then(()=>alert("Copied"))}
+
+function renderCalendar(){let n=new Date(),y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0);let html=`<h3>${first.toLocaleString("default",{month:"long"})} ${y}</h3><br><div class="calendar">`;["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>html+=`<div class="dayname">${d}</div>`);for(let i=0;i<first.getDay();i++)html+="<div></div>";for(let d=1;d<=last.getDate();d++){let iso=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;let a=entries.filter(e=>e.date===iso),h=a.reduce((s,e)=>s+Number(e.labourHours||0),0);html+=`<div class="day ${h?"work":""}"><b>${d}</b>${h?`<br><small>${fmt(h)} labour hrs</small><br><small>${a.length} entries</small>`:""}</div>`}$("calendarView").innerHTML=html+"</div>"}
+function renderWeekly(){let now=new Date(),sun=new Date(now);sun.setDate(now.getDate()-now.getDay());let total=0,actual=0,html="<h3>Current Week</h3><br>";for(let i=0;i<7;i++){let d=new Date(sun);d.setDate(sun.getDate()+i);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());let iso=d.toISOString().split("T")[0],a=entries.filter(e=>e.date===iso),h=a.reduce((s,e)=>s+Number(e.labourHours||0),0),ah=a.reduce((s,e)=>s+Number(e.hours||0),0);total+=h;actual+=ah;html+=`<div class="summary"><span>${iso}</span><b>${fmt(ah)} actual / ${fmt(h)} labour hrs</b></div>`}html+=`<div class="summary"><span>Total Week</span><b>${fmt(actual)} actual / ${fmt(total)} labour hrs</b></div>`;$("weeklyView").innerHTML=html}
+function renderMonthly(){let n=new Date(),ym=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}`,a=entries.filter(e=>e.date.startsWith(ym));let ah=a.reduce((s,e)=>s+Number(e.hours||0),0),lh=a.reduce((s,e)=>s+Number(e.labourHours||0),0),r=a.reduce((s,e)=>s+(e.rooms||[]).length,0),lr=a.reduce((s,e)=>s+Number(e.labourRooms||0),0),days=new Set(a.map(e=>e.date)).size;let html=`<h3>Monthly Summary</h3><br><div class="summary"><span>Actual Hours</span><b>${fmt(ah)}</b></div><div class="summary"><span>Labour Hours</span><b>${fmt(lh)}</b></div><div class="summary"><span>Rooms / Labour Rooms</span><b>${r} / ${lr}</b></div><div class="summary"><span>Days Worked</span><b>${days}</b></div>`;bnbs.forEach(b=>{let x=a.filter(e=>e.bnb===b.id),h=x.reduce((s,e)=>s+Number(e.labourHours||0),0);html+=`<div class="summary"><span>${esc(b.name)} Labour Hours</span><b>${fmt(h)}</b></div>`});$("monthlyView").innerHTML=html}
+window.showTab=(tab,btn)=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));btn.classList.add("active");["list","calendar","weekly","monthly"].forEach(v=>$(v+"View").classList.add("hidden"));$(tab+"View").classList.remove("hidden");renderAll()}
+
+window.openAdminModal=()=>{$("adminModal").classList.remove("hidden");if(adminUnlocked){$("pinBox").classList.add("hidden");$("adminPanel").classList.remove("hidden");renderBnbSelects();renderManager()}}
+window.closeAdminModal=()=>{$("adminModal").classList.add("hidden")}
+window.unlockAdmin=()=>{if($("pinInput").value===ADMIN_PIN){adminUnlocked=true;$("pinBox").classList.add("hidden");$("adminPanel").classList.remove("hidden");renderBnbSelects();renderManager();renderList()}else alert("Wrong PIN")}
+window.renderManager=()=>{let b=bnbs.find(x=>x.id===$("manageBnb").value);if(!b)return;$("editBnbName").value=b.name;$("roomManager").innerHTML=(b.rooms||[]).map((r,i)=>`<div class="manage-row"><input value="${esc(r)}" id="room_${i}"><button class="green" onclick="saveRoom(${i})">Save</button><button class="red" onclick="deleteRoom(${i})">Delete</button></div>`).join("")||"<p class='small'>No rooms added.</p>"}
+window.addBnb=async()=>{let name=$("newBnb").value.trim();if(!name)return alert("Enter B&B name");let id=uid();await setDoc(doc(db,"bnbs",id),{id,name,rooms:[],createdAt:serverTimestamp()});$("newBnb").value=""}
+window.renameBnb=async()=>{let id=$("manageBnb").value,b=bnbs.find(x=>x.id===id),name=$("editBnbName").value.trim();if(!b||!name)return alert("Enter name");await updateDoc(doc(db,"bnbs",b.docId||b.id),{name})}
+window.deleteBnb=async()=>{let id=$("manageBnb").value,b=bnbs.find(x=>x.id===id);if(!b)return;if(bnbs.length<=1)return alert("At least one B&B required");if(confirm("Delete this B&B from future list?"))await deleteDoc(doc(db,"bnbs",b.docId||b.id))}
+window.addRoom=async()=>{let b=bnbs.find(x=>x.id===$("manageBnb").value),name=$("newRoom").value.trim();if(!b||!name)return alert("Enter room name");let rooms=[...(b.rooms||[]),name];await updateDoc(doc(db,"bnbs",b.docId||b.id),{rooms});$("newRoom").value=""}
+window.saveRoom=async i=>{let b=bnbs.find(x=>x.id===$("manageBnb").value),name=$("room_"+i).value.trim();if(!b||!name)return alert("Room name cannot be empty");let rooms=[...(b.rooms||[])];rooms[i]=name;await updateDoc(doc(db,"bnbs",b.docId||b.id),{rooms})}
+window.deleteRoom=async i=>{let b=bnbs.find(x=>x.id===$("manageBnb").value);if(!b)return;if(confirm("Delete room?")){let rooms=[...(b.rooms||[])];rooms.splice(i,1);await updateDoc(doc(db,"bnbs",b.docId||b.id),{rooms})}}
+
+window.exportCSV=()=>{let rows=[["Date","Staff","Start","End","B&B","Rooms","Actual Hours","Worker Count","Labour Hours","Room Count","Labour Rooms","Names","Notes"],...filteredEntries().map(e=>[e.date,e.staff,e.startTime,e.endTime,bnbName(e.bnb),(e.rooms||[]).join("|"),e.hours,e.workerCount,e.labourHours,(e.rooms||[]).length,e.labourRooms,e.workerNames,e.notes])];let csv=rows.map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\n");let blob=new Blob([csv],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="cleaning-log.csv";a.click()}
+function renderAll(){renderStats();renderList();renderCalendar();renderWeekly();renderMonthly()}
+$("bnb").addEventListener("change",()=>{selectedRooms=[];renderRooms()});$("date").value=today();renderWorkers();listenFirebase();
+</script>
+</body>
+</html>
